@@ -7,13 +7,18 @@
 //
 
 import UIKit
+import Firebase
 
 class LoginController: UIViewController, UITextFieldDelegate {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(61, 91, 151)
-        self.setupSubviews()
+        self.view.backgroundColor = UIColor(61, 91, 151)
+        self.setupPorofileImageView()
+        self.setupSegmentedControl()
+        self.setupLoginForm()
+        self.setupRegisterForm()
+        self.setupButtons()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -30,108 +35,194 @@ class LoginController: UIViewController, UITextFieldDelegate {
         return imageView
     }()
     
-    var textFieldContainer: UIView = {
-        let container = UIView()
-        container.backgroundColor = UIColor.white
-        container.layer.cornerRadius = 5
-        container.layer.masksToBounds = true
-        container.translatesAutoresizingMaskIntoConstraints = false
-        return container
+    lazy var segmentedControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: ["Login", "Register"])
+        control.tintColor = UIColor.white
+        control.selectedSegmentIndex = 0
+        control.translatesAutoresizingMaskIntoConstraints = false
+        control.addTarget(self, action: #selector(segmentedControlDidPressed), for: .valueChanged)
+        return control
     }()
     
-    lazy var nameTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Name"
-        let padding = UIView(frame:CGRect(x: 0, y: 0, width: 15, height: 30))
-        tf.leftView = padding
-        tf.leftViewMode = UITextFieldViewMode.always
-        tf.delegate = self
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+    lazy var loginForm: LoginForm = {
+        let form = LoginForm()
+        form.emailTextField.delegate = self
+        form.passwordTextField.delegate = self
+        form.translatesAutoresizingMaskIntoConstraints = false
+        return form
     }()
     
-    lazy var emailTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Email"
-        let padding = UIView(frame:CGRect(x: 0, y: 0, width: 15, height: 30))
-        tf.leftView = padding
-        tf.leftViewMode = UITextFieldViewMode.always
-        tf.delegate = self
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
+    lazy var registerForm: RegisterForm = {
+        let form = RegisterForm()
+        form.nameTextField.delegate = self
+        form.emailTextField.delegate = self
+        form.passwordTextField.delegate = self
+        form.isHidden = true
+        form.translatesAutoresizingMaskIntoConstraints = false
+        return form
     }()
     
-    lazy var passwordTextField: UITextField = {
-        let tf = UITextField()
-        let padding = UIView(frame:CGRect(x: 0, y: 0, width: 15, height: 30))
-        tf.leftView = padding
-        tf.leftViewMode = UITextFieldViewMode.always
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        tf.placeholder = "password"
-        tf.delegate = self
-        tf.clearsOnInsertion = false
-        tf.isSecureTextEntry = true
-        return tf
+    lazy var loginButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Login", for: .normal)
+        button.setTitleColor(UIColor.white, for: .normal)
+        button.backgroundColor = UIColor(0, 138, 230)
+        button.layer.cornerRadius = 5
+        button.layer.masksToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
+        return button
     }()
     
-    var registerButton: UIButton = {
+    lazy var registerButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Register", for: .normal)
         button.setTitleColor(UIColor.white, for: .normal)
         button.backgroundColor = UIColor(0, 138, 230)
         button.layer.cornerRadius = 5
         button.layer.masksToBounds = true
+        button.isHidden = true
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(handleRegister), for: .touchUpInside)
         return button
     }()
     
-    
-    func setupSubviews() {
-        
-        view.addSubview(textFieldContainer)
-        textFieldContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
-        textFieldContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
-        textFieldContainer.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        textFieldContainer.heightAnchor.constraint(equalToConstant: 180).isActive = true
-        
+    func setupPorofileImageView() {
         view.addSubview(profileImageView)
-        profileImageView.bottomAnchor.constraint(equalTo: textFieldContainer.topAnchor, constant: -50).isActive = true
+        profileImageView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: 30).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+    }
+
+    
+    func setupSegmentedControl() {
+        view.addSubview(segmentedControl)
+        segmentedControl.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 30).isActive = true
+        segmentedControl.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -32).isActive = true
+        segmentedControl.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        segmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+    }
+    
+    func setupLoginForm() {
+        view.addSubview(loginForm)
+        loginForm.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 20).isActive = true
+        loginForm.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -32).isActive = true
+        loginForm.heightAnchor.constraint(equalToConstant: 180).isActive = true
+        loginForm.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+    }
+    
+    func setupRegisterForm() {
+        view.addSubview(registerForm)
+        registerForm.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 20).isActive = true
+        registerForm.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -32).isActive = true
+        registerForm.heightAnchor.constraint(equalToConstant: 180).isActive = true
+        registerForm.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+    }
+    
+    func setupButtons() {
+        view.addSubview(loginButton)
+        loginButton.topAnchor.constraint(equalTo: loginForm.bottomAnchor, constant: 20).isActive = true
+        loginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
+        loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
+        loginButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         view.addSubview(registerButton)
-        registerButton.topAnchor.constraint(equalTo: textFieldContainer.bottomAnchor, constant: 12).isActive = true
+        registerButton.topAnchor.constraint(equalTo: registerForm.bottomAnchor, constant: 20).isActive = true
         registerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         registerButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
         registerButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
         registerButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        textFieldContainer.addSubview(nameTextField)
-        nameTextField.topAnchor.constraint(equalTo: textFieldContainer.topAnchor).isActive = true
-        nameTextField.leadingAnchor.constraint(equalTo: textFieldContainer.leadingAnchor).isActive = true
-        nameTextField.trailingAnchor.constraint(equalTo: textFieldContainer.trailingAnchor).isActive = true
-        nameTextField.widthAnchor.constraint(equalTo: textFieldContainer.widthAnchor, multiplier: 1).isActive = true
-        nameTextField.heightAnchor.constraint(equalTo: textFieldContainer.heightAnchor, multiplier: 1/3).isActive = true
-        
-        textFieldContainer.addSubview(emailTextField)
-        emailTextField.topAnchor.constraint(equalTo: nameTextField.bottomAnchor).isActive = true
-        emailTextField.leadingAnchor.constraint(equalTo: textFieldContainer.leadingAnchor).isActive = true
-        emailTextField.trailingAnchor.constraint(equalTo: textFieldContainer.trailingAnchor).isActive = true
-        emailTextField.widthAnchor.constraint(equalTo: textFieldContainer.widthAnchor, multiplier: 1).isActive = true
-        emailTextField.heightAnchor.constraint(equalTo: textFieldContainer.heightAnchor, multiplier: 1/3).isActive = true
-        
-        textFieldContainer.addSubview(passwordTextField)
-        passwordTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor).isActive = true
-        passwordTextField.leadingAnchor.constraint(equalTo: textFieldContainer.leadingAnchor).isActive = true
-        passwordTextField.trailingAnchor.constraint(equalTo: textFieldContainer.trailingAnchor).isActive = true
-        passwordTextField.widthAnchor.constraint(equalTo: textFieldContainer.widthAnchor, multiplier: 1).isActive = true
-        passwordTextField.heightAnchor.constraint(equalTo: textFieldContainer.heightAnchor, multiplier: 1/3).isActive = true
-    }
+     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    func segmentedControlDidPressed() {
+
+        if segmentedControl.selectedSegmentIndex == 0 {
+            loginForm.isHidden = false
+            registerForm.isHidden = true
+            loginButton.isHidden = false
+            registerButton.isHidden = true
+        }
+        
+        if segmentedControl.selectedSegmentIndex == 1 {
+            loginForm.isHidden = true
+            registerForm.isHidden = false
+            loginButton.isHidden = true
+            registerButton.isHidden = false
+        }
+    }
+    
+    func handleLogin() {
+        
+        guard let email = loginForm.emailTextField.text , email != "" else {
+            print("Email is empty")
+            return
+        }
+        
+        guard let password = loginForm.passwordTextField.text , password != "" else {
+            print("Password is empty")
+            return
+        }
+        
+        FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
+            if error != nil {
+                print(error.debugDescription)
+                return
+            }
+            
+            let controller = NavigationController()
+            
+            self.present(controller, animated: true, completion: nil)
+        })
+    }
+    
+    func handleRegister() {
+        
+        guard let name = registerForm.nameTextField.text , name != "" else {
+            print("Name is empty")
+            return
+        }
+        
+        guard let email = registerForm.emailTextField.text , email != "" else {
+            print("Email is empty")
+            return
+        }
+        
+        guard let password = registerForm.passwordTextField.text , password != "" else {
+            print("Password is empty")
+            return
+        }
+        
+        
+        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user, error) in
+            if error != nil {
+                print(error.debugDescription)
+                return
+            }
+            
+            let ref = FIRDatabase.database().reference()
+            
+            let userRef = ref.child("users").child((user?.uid)!)
+            
+            userRef.updateChildValues(["name": name, "email": email], withCompletionBlock: { (error, ref) in
+                
+                if error != nil {
+                    print(error.debugDescription)
+                    return
+                }
+                
+                let controller = NavigationController()
+                
+                self.present(controller, animated: true, completion: nil)
+            })
+            
+        })
     }
 }
 
