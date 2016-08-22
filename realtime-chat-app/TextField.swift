@@ -17,6 +17,7 @@ class TextField: UITextField {
         let padding = UIView(frame:CGRect(x: 0, y: 0, width: 15, height: 30))
         self.leftView = padding
         self.leftViewMode = UITextFieldViewMode.always
+        self.autocapitalizationType = .none
         self.translatesAutoresizingMaskIntoConstraints = false
         self.setupBottomBorder()
     }

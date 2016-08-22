@@ -12,8 +12,8 @@ class NavigationController: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let mainViewController = MainViewController()
-        viewControllers.append(mainViewController)
+        let messageViewController = MessageViewController()
+        viewControllers.append(messageViewController)
     }
 
 }

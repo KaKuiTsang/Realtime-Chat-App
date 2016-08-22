@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class LoginController: UIViewController, UITextFieldDelegate {
+class LoginController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,13 +25,15 @@ class LoginController: UIViewController, UITextFieldDelegate {
         return .lightContent
     }
     
-    var profileImageView: UIImageView = {
+    lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "chat.png")
         imageView.contentMode = .scaleAspectFill
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 50
         imageView.layer.masksToBounds = true
+        //imageView.isUserInteractionEnabled = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileImageViewDidPressed)))
         return imageView
     }()
     
@@ -95,7 +97,6 @@ class LoginController: UIViewController, UITextFieldDelegate {
         profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
 
-    
     func setupSegmentedControl() {
         view.addSubview(segmentedControl)
         segmentedControl.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 30).isActive = true
@@ -148,6 +149,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
             registerForm.isHidden = true
             loginButton.isHidden = false
             registerButton.isHidden = true
+            profileImageView.isUserInteractionEnabled = false
         }
         
         if segmentedControl.selectedSegmentIndex == 1 {
@@ -155,7 +157,28 @@ class LoginController: UIViewController, UITextFieldDelegate {
             registerForm.isHidden = false
             loginButton.isHidden = true
             registerButton.isHidden = false
+            profileImageView.isUserInteractionEnabled = true
         }
+    }
+    
+    func profileImageViewDidPressed() {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.allowsEditing = true
+        present(picker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        if let image = info["UIImagePickerControllerEditedImage"] as? UIImage {
+            profileImageView.image = image
+        } else if let image = info["UIImagePickerControllerOriginalImage"] as? UIImage {
+            profileImageView.image = image
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
     }
     
     func handleLogin() {
@@ -199,29 +222,64 @@ class LoginController: UIViewController, UITextFieldDelegate {
             return
         }
         
-        
         FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user, error) in
+            
             if error != nil {
                 print(error.debugDescription)
                 return
             }
             
-            let ref = FIRDatabase.database().reference()
+            self.uploadImage((user?.uid)!, name, email)
             
-            let userRef = ref.child("users").child((user?.uid)!)
+        })
+        
+    }
+    
+    func uploadImage(_ uid: String, _ name: String, _ email: String) {
+        
+        let imageName = NSUUID().uuidString
+        
+        let storageRef = FIRStorage.storage().reference().child("profile_images").child("\(imageName).png")
+        
+        if let uploadData = UIImagePNGRepresentation(profileImageView.image!) {
             
-            userRef.updateChildValues(["name": name, "email": email], withCompletionBlock: { (error, ref) in
+            storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
                 
                 if error != nil {
                     print(error.debugDescription)
                     return
                 }
                 
-                let controller = NavigationController()
+                if let imageUrl = metadata?.downloadURL()?.absoluteString {
+                    
+                    self.createUserInfo(uid, name, email, imageUrl)
+                    
+                }
                 
-                self.present(controller, animated: true, completion: nil)
             })
             
+        }
+        
+    }
+    
+    func createUserInfo(_ uid: String, _ name: String, _ email: String, _ imageUrl: String) {
+        
+        let ref = FIRDatabase.database().reference()
+        
+        let userRef = ref.child("users").child(uid)
+        
+        let value = ["name": name, "email": email, "imageUrl": imageUrl]
+        
+        userRef.updateChildValues(value, withCompletionBlock: { (error, ref) in
+            
+            if error != nil {
+                print(error.debugDescription)
+                return
+            }
+            
+            let controller = NavigationController()
+            
+            self.present(controller, animated: true, completion: nil)
         })
     }
 }
