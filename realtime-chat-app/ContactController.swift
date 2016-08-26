@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class CreateMessageViewController: UITableViewController {
+class ContactController: UITableViewController {
     
     let cellId = "userCell"
     
@@ -39,6 +39,9 @@ class CreateMessageViewController: UITableViewController {
                     let user = User()
                     user.setValuesForKeys(dictionary)
                     self.users.append(user)
+                    self.users.sort(by: { (user1, user2) -> Bool in
+                        return user1.name! < user2.name!
+                    })
                 }
             }
             
@@ -48,18 +51,18 @@ class CreateMessageViewController: UITableViewController {
             
         })
     }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 84
+    }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let user = users[indexPath.row]
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
-
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! UserCell
         cell.textLabel?.text = user.name
-        
         cell.detailTextLabel?.text = user.email
-        
+        cell.profileImageView.fetchImage(urlString: user.imageUrl!)
         return cell
     }
  

@@ -9,11 +9,10 @@
 import UIKit
 import Firebase
 
-class MessageViewController: UITableViewController {
+class MessageController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        //self.fetchUser()
         let newMessageIcon = UIImage(named: "new_message_icon")
         view.backgroundColor = UIColor.white
         navigationItem.title = "Messages"
@@ -22,17 +21,6 @@ class MessageViewController: UITableViewController {
             (handleCreateMessage))
         navigationItem.backBarButtonItem = UIBarButtonItem(title:"Back", style:.plain, target:nil, action:nil)
     }
-    
-    /*func fetchUser() {
-        
-        let uid = FIRAuth.auth()?.currentUser?.uid
-        
-        FIRDatabase.database().reference().child("users").child(uid!).observeSingleEvent(of: .value, with: {(snapshot) in
-            if let userInfo = snapshot.value as? [String: AnyObject] {
-                self.navigationItem.title = userInfo["name"] as? String
-            }
-        })
-    }*/
     
     func handleLogout() {
         
@@ -53,7 +41,7 @@ class MessageViewController: UITableViewController {
     
     func handleCreateMessage() {
         
-        let controller = CreateMessageViewController()
+        let controller = ContactController()
         
         navigationController?.pushViewController(controller, animated: true)
         
