@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		64B67AAF4E2BC410881D521A /* Pods_realtime_chat_app.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BA222EA733AA4107EAC5E22 /* Pods_realtime_chat_app.framework */; };
+		A80F26DC1D7051BE0001649C /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80F26DB1D7051BE0001649C /* ChatLogController.swift */; };
+		A80F26DE1D7051D20001649C /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80F26DD1D7051D20001649C /* Message.swift */; };
+		A80F26E01D7052200001649C /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80F26DF1D7052200001649C /* MessageCell.swift */; };
 		A8107B451D67664800A8A423 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8107B441D67664800A8A423 /* NavigationController.swift */; };
 		A812A8CD1D69CD0E00A8422E /* MessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A812A8CC1D69CD0E00A8422E /* MessageController.swift */; };
 		A85C49D51D65DD6100D8325F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85C49D41D65DD6100D8325F /* AppDelegate.swift */; };
@@ -30,6 +33,9 @@
 		0BA222EA733AA4107EAC5E22 /* Pods_realtime_chat_app.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_realtime_chat_app.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		163CC703C6F576EE7EFF4CE4 /* Pods-realtime-chat-app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-realtime-chat-app.release.xcconfig"; path = "Pods/Target Support Files/Pods-realtime-chat-app/Pods-realtime-chat-app.release.xcconfig"; sourceTree = "<group>"; };
 		20ED762EC85B29E7971F33F0 /* Pods-realtime-chat-app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-realtime-chat-app.debug.xcconfig"; path = "Pods/Target Support Files/Pods-realtime-chat-app/Pods-realtime-chat-app.debug.xcconfig"; sourceTree = "<group>"; };
+		A80F26DB1D7051BE0001649C /* ChatLogController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
+		A80F26DD1D7051D20001649C /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		A80F26DF1D7052200001649C /* MessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		A8107B441D67664800A8A423 /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		A812A8CC1D69CD0E00A8422E /* MessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageController.swift; sourceTree = "<group>"; };
 		A85C49D11D65DD6100D8325F /* realtime-chat-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "realtime-chat-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -114,6 +120,7 @@
 				A8107B441D67664800A8A423 /* NavigationController.swift */,
 				A812A8CC1D69CD0E00A8422E /* MessageController.swift */,
 				A88E6A7F1D6AFF8E000F65E5 /* ContactController.swift */,
+				A80F26DB1D7051BE0001649C /* ChatLogController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -126,6 +133,7 @@
 				A8AA8E9A1D699A300093F671 /* LoginForm.swift */,
 				A8AA8E9C1D69A2BE0093F671 /* RegisterForm.swift */,
 				A88E6A831D6B04FD000F65E5 /* UserCell.swift */,
+				A80F26DF1D7052200001649C /* MessageCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -134,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				A88E6A811D6B01C7000F65E5 /* User.swift */,
+				A80F26DD1D7051D20001649C /* Message.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -288,7 +297,10 @@
 				A88E6A841D6B04FD000F65E5 /* UserCell.swift in Sources */,
 				A8AA8E991D69989A0093F671 /* TextField.swift in Sources */,
 				A85C49EC1D65E21D00D8325F /* Extensions.swift in Sources */,
+				A80F26E01D7052200001649C /* MessageCell.swift in Sources */,
+				A80F26DC1D7051BE0001649C /* ChatLogController.swift in Sources */,
 				A88E6A821D6B01C7000F65E5 /* User.swift in Sources */,
+				A80F26DE1D7051D20001649C /* Message.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

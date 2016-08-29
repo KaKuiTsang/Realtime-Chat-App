@@ -20,6 +20,7 @@ class ContactController: UITableViewController {
         self.fetchUsers()
         tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
         navigationItem.title = "Contacts"
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -37,6 +38,7 @@ class ContactController: UITableViewController {
             if let dictionary = snapshot.value as? [String: AnyObject] {
                 if dictionary["email"]! as? String != loggedUserEmail {
                     let user = User()
+                    user.uid = snapshot.key
                     user.setValuesForKeys(dictionary)
                     self.users.append(user)
                     self.users.sort(by: { (user1, user2) -> Bool in
@@ -64,6 +66,13 @@ class ContactController: UITableViewController {
         cell.detailTextLabel?.text = user.email
         cell.profileImageView.fetchImage(urlString: user.imageUrl!)
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let receiver = self.users[indexPath.row]
+        let controller = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        controller.receiver = receiver
+        navigationController?.pushViewController(controller, animated: true)
     }
  
 
