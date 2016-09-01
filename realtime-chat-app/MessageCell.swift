@@ -9,9 +9,8 @@
 import UIKit
 import Firebase
 
-let messageCache = NSCache<AnyObject, AnyObject>()
-
-let userCache = NSCache<AnyObject, AnyObject>()
+// let messageCache = NSCache<AnyObject, AnyObject>()
+// let userCache = NSCache<AnyObject, AnyObject>()
 
 class MessageCell: UITableViewCell {
     
@@ -70,33 +69,28 @@ class MessageCell: UITableViewCell {
         
         self.setTimeLabel()
         
-        if let cachedMessge = messageCache.object(forKey: self.message!.key! as AnyObject) as? Message {
-            if let cachedUser = userCache.object(forKey: cachedMessge.to! as AnyObject) as? [String: AnyObject] {
-                self.textLabel?.text = cachedUser["name"] as? String
-                self.detailTextLabel?.text = cachedMessge.text!
-                self.profileImageView.fetchImage(urlString: (cachedUser["imageUrl"] as? String)!)
-            }
-            return
-        }
+        self.detailTextLabel?.text = self.message?.text
         
-        let ref = FIRDatabase.database().reference().child("users").child(message!.to!)
-        
-        ref.observeSingleEvent(of: .value, with: {(snapshot) in
+        if let uid = message?.getChartUserId() {
             
-            if let dictionary = snapshot.value as? [String: AnyObject] {
-                let name = dictionary["name"] as! String
-                let urlString = dictionary["imageUrl"] as! String
-                messageCache.setObject(self.message!, forKey: self.message!.key! as AnyObject)
-                userCache.setObject(dictionary as AnyObject, forKey: self.message!.to! as AnyObject)
-                DispatchQueue.main.async {
-                    self.textLabel?.text = name
-                    self.detailTextLabel?.text = self.message!.text!
-                    self.profileImageView.fetchImage(urlString: urlString)
+            let ref = FIRDatabase.database().reference().child("users").child(uid)
+            
+            ref.observeSingleEvent(of: .value, with: {(snapshot) in
+                
+                if let dictionary = snapshot.value as? [String: AnyObject] {
+                    
+                    if let name = dictionary["name"] as? String {
+                         self.textLabel?.text = name
+                    }
+                    
+                    if let urlString = dictionary["imageUrl"] as? String {
+                        self.profileImageView.fetchImage(urlString: urlString)
+                    }
+  
                 }
-            }
-            
-        })
-    
+                
+            })
+        }
     }
     
     func setTimeLabel() {

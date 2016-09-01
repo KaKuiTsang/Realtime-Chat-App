@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             window?.rootViewController = NavigationController()
         }
-
+        
         return true
     }
 

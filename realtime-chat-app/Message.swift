@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class Message: NSObject {
     var key: String? 
@@ -14,5 +15,9 @@ class Message: NSObject {
     var to: String?
     var text: String?
     var timestamp: NSNumber?
+    
+    func getChartUserId() -> String?{
+        return self.from == FIRAuth.auth()?.currentUser?.uid ? self.to : self.from
+    }
 }
 
