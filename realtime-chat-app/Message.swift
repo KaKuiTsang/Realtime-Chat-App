@@ -14,6 +14,9 @@ class Message: NSObject {
     var from: String?
     var to: String?
     var text: String?
+    var imageUrl: String?
+    var imageWidth: NSNumber?
+    var imageHeight: NSNumber?
     var timestamp: NSNumber?
     
     func getChartUserId() -> String?{

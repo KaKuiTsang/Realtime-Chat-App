@@ -433,6 +433,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = X4DTA8J4K7;
 				INFOPLIST_FILE = "realtime-chat-app/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.kakui.realtime-chat-app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -450,6 +451,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = X4DTA8J4K7;
 				INFOPLIST_FILE = "realtime-chat-app/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.kakui.realtime-chat-app";
 				PRODUCT_NAME = "$(TARGET_NAME)";

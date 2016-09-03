@@ -35,24 +35,30 @@ class MessageController: UITableViewController {
     func fetchMessages() {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else { return }
         let ref = FIRDatabase.database().reference().child("user-messages").child(uid)
+        
         ref.observe(.childAdded, with: { (snapshot) in
-            let messageId = snapshot.key
-            let messageRef = FIRDatabase.database().reference().child("messages").child(messageId)
+            let userId = snapshot.key
             
-            messageRef.observeSingleEvent(of: .value, with: { (snapshot) in
-                if let dictionary =  snapshot.value as? [String: AnyObject] {
-                    let message = Message()
-                    message.key = snapshot.key
-                    message.setValuesForKeys(dictionary)
-                    self.messages.append(message)
-                    self.messagesDictionary[message.getChartUserId()!] = message
-                    self.messages = Array(self.messagesDictionary.values)
-                    self.messages.sort(by: { (message1, message2) -> Bool in
-                        return (message1.timestamp?.intValue)! > (message2.timestamp?.intValue)!
-                    })
-                    self.timer?.invalidate()
-                    self.timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.handleTableReload), userInfo: nil, repeats: false)
-                }
+            FIRDatabase.database().reference().child("user-messages").child(uid).child(userId).observe(.childAdded, with: { (snapshot) in
+                
+                let messageId = snapshot.key
+                let messageRef = FIRDatabase.database().reference().child("messages").child(messageId)
+                
+                messageRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let dictionary =  snapshot.value as? [String: AnyObject] {
+                        let message = Message()
+                        message.key = snapshot.key
+                        message.setValuesForKeys(dictionary)
+                        self.messages.append(message)
+                        self.messagesDictionary[message.getChartUserId()!] = message
+                        self.messages = Array(self.messagesDictionary.values)
+                        self.messages.sort(by: { (message1, message2) -> Bool in
+                            return (message1.timestamp?.intValue)! > (message2.timestamp?.intValue)!
+                        })
+                        self.timer?.invalidate()
+                        self.timer = Timer.scheduledTimer(timeInterval: 0.18, target: self, selector: #selector(self.handleTableReload), userInfo: nil, repeats: false)
+                    }
+                })
             })
         })
     }
@@ -104,6 +110,7 @@ class MessageController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         let message = self.messages[indexPath.row]
         if let uid = message.getChartUserId() {
             let ref = FIRDatabase.database().reference().child("users").child(uid)
@@ -114,7 +121,12 @@ class MessageController: UITableViewController {
                     receiver.setValuesForKeys(dictionary)
                     let controller = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
                     controller.receiver = receiver
+                    controller.receiver = receiver
                     self.navigationController?.pushViewController(controller, animated: true)
+//                    if let controller = self.navigationController?.viewControllers[0] as? ChatLogController {
+//                        controller.receiver = receiver
+//                        self.navigationController?.pushViewController(controller, animated: true)
+//                    }
                 }
             })
         }

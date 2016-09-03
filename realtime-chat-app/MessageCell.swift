@@ -9,9 +9,6 @@
 import UIKit
 import Firebase
 
-// let messageCache = NSCache<AnyObject, AnyObject>()
-// let userCache = NSCache<AnyObject, AnyObject>()
-
 class MessageCell: UITableViewCell {
     
     var message: Message? {
@@ -66,17 +63,12 @@ class MessageCell: UITableViewCell {
     }
     
     func configureCell() {
-        
         self.setTimeLabel()
-        
         self.detailTextLabel?.text = self.message?.text
         
         if let uid = message?.getChartUserId() {
-            
             let ref = FIRDatabase.database().reference().child("users").child(uid)
-            
             ref.observeSingleEvent(of: .value, with: {(snapshot) in
-                
                 if let dictionary = snapshot.value as? [String: AnyObject] {
                     
                     if let name = dictionary["name"] as? String {
@@ -86,9 +78,7 @@ class MessageCell: UITableViewCell {
                     if let urlString = dictionary["imageUrl"] as? String {
                         self.profileImageView.fetchImage(urlString: urlString)
                     }
-  
                 }
-                
             })
         }
     }

@@ -11,7 +11,7 @@ import Firebase
 
 class ContactController: UITableViewController {
     
-    var messageController: MessageController?
+    weak var messageController: MessageController?
     
     let cellId = "userCell"
     
@@ -60,7 +60,6 @@ class ContactController: UITableViewController {
         return 84
     }
 
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let user = users[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! UserCell
@@ -71,11 +70,11 @@ class ContactController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        dismiss(animated: true, completion: nil)
         let receiver = self.users[indexPath.row]
         let controller = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
         controller.receiver = receiver
         messageController?.navigationController?.pushViewController(controller, animated: true)
-        dismiss(animated: true, completion: nil)
     }
     
     func handleCancel() {
